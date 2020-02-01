@@ -1,0 +1,238 @@
+<html>
+	<head>
+	<title>Cast Your Vote</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		{% load staticfiles %}
+	<!--===============================================================================================-->	
+		<link rel="icon" type="image/png" href="{% static 'voting/images/icons/favicon.ico'%}"/>
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/bootstrap/css/bootstrap.min.css'%}">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/fonts/font-awesome-4.7.0/css/font-awesome.min.css'%}">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/fonts/Linearicons-Free-v1.0.0/icon-font.min.css'%}">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/animate/animate.css'%}">
+	<!--===============================================================================================-->	
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/css-hamburgers/hamburgers.min.css'%}">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/select2/select2.min.css'%}">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/css/util.css'%}">
+		<link rel="stylesheet" type="text/css" href="{% static 'voting/css/main.css'%}">
+	<!--===============================================================================================-->
+
+		<style>
+				.topnav {
+		  overflow: hidden;
+		  background-color: #333;
+		}
+
+		.topnav p {
+		  float: right;
+		  color: #f2f2f2;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		  font-size: 17px;
+		}
+
+		.topnav p:hover {
+		  background-color: #ddd;
+		  color: black;
+		}
+		
+		
+		.countdown {
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.countdown span {
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 3rem;
+    margin-left: 0.8rem;
+}
+
+.countdown span:first-of-type {
+    margin-left: 0;
+}
+
+.countdown-circles {
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.countdown-circles span {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.countdown-circles span:first-of-type {
+    margin-left: 0;
+}
+
+
+/*
+*
+* ==================================================
+* FOR DEMO PURPOSES
+* ==================================================
+*
+*/
+body {
+    min-height: 100vh;
+}
+
+.bg-gradient-1 {
+    background: #7f7fd5;
+    background: -webkit-linear-gradient(to right, #7f7fd5, #86a8e7, #91eae4);
+    background: linear-gradient(to right, #7f7fd5, #86a8e7, #91eae4);
+}
+
+.bg-gradient-2 {
+    background: #654ea3;
+    background: -webkit-linear-gradient(to right, #654ea3, #eaafc8);
+    background: linear-gradient(to right, #654ea3, #eaafc8);
+}
+
+.bg-gradient-3 {
+    background: #ff416c;
+    background: -webkit-linear-gradient(to right, #ff416c, #ff4b2b);
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+}
+
+.bg-gradient-4 {
+    background: #007991;
+    background: -webkit-linear-gradient(to right, #007991, #78ffd6);
+    background: linear-gradient(to right, black, grey);
+}
+
+
+
+.btn-demo {
+    padding: 0.5rem 2rem !important;
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold !important;
+}
+
+.btn-demo:hover, .btn-demo:focus {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.5);
+}
+		
+		
+		</style>
+	</head>
+	
+	<body>
+	
+	<script>
+		function send_vote(){
+		
+		
+		//var vote = document.getElementsByName("selected").value;
+		try{
+			var vote = document.querySelector('input[name="selected"]:checked').value;
+		}
+		catch{
+			alert("Please select a candidate");
+		}
+		console.log(typeof(vote));
+		var candidate_index = document.getElementById(vote).rowIndex;
+		console.log(candidate_index);
+		var ref_string = {{ref_string}};
+		var set_selected="{{set_selected}}"
+		var username = "{{username}}";
+		console.log(ref_string);
+		console.log(set_selected)
+		var query = '<form action= "/voting/castVote/" method = "POST" id="request_vote"> {% csrf_token %}<input type = "hidden" name = "ref_string" value = "' + ref_string + '"> <input type = "hidden" name = "set_selected" value = "' + set_selected + '"> <input type = "hidden" name = "candidate_id" value = "' + vote + '"> <input type = "hidden" name = "candidate_index" value = "' + candidate_index + '">  <input type = "hidden" name = "username" value = "' + username + '"></form>';
+		console.log(vote);
+		document.write(query);
+		document.getElementById('request_vote').submit();
+		}
+		//setTimeout(myFunction, 3000);
+		//location.reload();
+		
+		
+		function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+           //timer = duration;
+		   var query = '<form action = "/voting/" method = "POST" id = "redirect" > {% csrf_token %}</form>';
+		   document.write(query);
+		   document.getElementById("redirect").submit();
+        }
+    }, 1000);
+}
+
+window.onload = function () {
+    var fiveMinutes = 60 * 2,
+        display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+};
+		
+		
+	</script>
+	
+	<div class="topnav">
+		  <p> <a href="/voting/">Logout</a></p><p>Hi, {{username}} </p> 
+	</div>
+	<!-- <div class="py-5"> -->
+        <!-- <div class="row"> -->
+            <!-- <div class="col-lg-8 mx-auto"> -->
+				<div class="rounded bg-gradient-4 text-white shadow p-5 text-center ">
+					<div>Time remaining to cast your vote : <span id="time">02:00</span> minutes!</div>
+				</div>
+			<!-- </div> -->
+		<!-- </div> -->
+	</div>
+	<div class="limiter">
+		
+		<div class="container-login100">
+			
+			<h1><b>You are voting with set {{set_selected}}</b></h1><br><br>
+			
+				<table class="table" style="color:white";>
+				{% for ele, row in combined_set %}
+					<tr id="{{row.0}}">
+						<td>{{ele}}</td>
+						<td>{{ row.1 }}</td>
+						<td>{{ row.2 }}</td>
+						<td><input type="radio" name="selected" id = "{{row.0}}" value="{{row.0}}"></td>
+					</tr>
+				{% endfor %}
+				</table>
+				
+			<div class = "col-md-2"></div>
+					<div class="col-md-8">
+			<div class="container-login100-form-btn p-t-10">
+						<button class="login100-form-btn" onclick = send_vote()>
+							Vote
+						</button>
+					</div>
+			</div>
+					<div class ="col-md-2"></div>
+			</div>
+		</div>
+	</div>
+	</body>
+</html>

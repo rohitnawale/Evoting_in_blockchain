@@ -116,3 +116,6 @@ def done(request):
 		fh = open('serverkey.txt', 'w')
 		fh.write(str(key))
 		return render(request, 'voting/index.html', {'key':key})
+		
+def home(request):
+	return render(request, 'voting/home.html')

@@ -10,6 +10,8 @@ from . import Module_get_voterdata_from_blockchain
 from . import Module_get_candidate
 from . import homomorphic
 from . import Module_add_homomorphic_sets_to_database
+from . import Module_vote_check
+from . import Module_tally_votes
 
 # Create your views here.
 @csrf_exempt
@@ -19,11 +21,17 @@ def index (request):
 	username = request.POST.get('username')
 	password = request.POST.get('hash_all')
 	client_random_number_hash = str(request.POST.get('client_random_number_hash'))
+	checkVote = str(request.GET.get('checkVote'))
+	print("redirect from check vote method")
+	client_check_vote = str(request.POST.get('checkvote'))
+	print("client_check_vote :     ", client_check_vote)
 	# if it is the first time visitng the page i.e. not a login request then generate a random number and write it in a temporary file
 	if username == None:
 		key = int(random.uniform(0,100000))
 		fh = open('serverkey.txt', 'w')
 		fh.write(str(key))
+		
+		
 	# if it is a login request
 	if username != None:
 		# create a mysql connection
@@ -57,12 +65,17 @@ def index (request):
 			if Module_get_voterdata_from_blockchain.is_voter_on_blockchain(voter_id):
 				print('redirecting to next page')
 				#return HttpResponse(json.dumps(response_data), content_type="application/json")
+				if len(client_check_vote)>5:
+					ref_string, beta_bit = Module_vote_check.get_strings(username)
+					return render(request, 'voting/checkVote.html', {'username':username, 'ref_string':ref_string, 'beta_bit':beta_bit})
 				return render(request,'voting/instructions.html', {'username':username})
 			else:
 				return render(request, 'voting/index.html', {'message':'Voter is not registered on blockchain'})
 		else:
 			print('wrong password')
 			return render(request, 'voting/index.html', {'message':'Password is wrong'})
+	if len(checkVote) > 5:
+			return render(request, 'voting/index.html', {'key':key, 'checkVote':checkVote})
 	return render(request, 'voting/index.html', {'key':key})
 
 def instructions(request):
@@ -131,3 +144,16 @@ def register(request):
 		print(voter_id, voter_name, age, region, password)
 		return render(request, "voting/home.html")
 	return render(request, 'voting/register.html')
+	
+def checkVote(request):
+	return render(request, "voting/index.html")
+	
+def tally(request):
+	regions = Module_tally_votes.get_regions()
+	votes_per_region = Module_tally_votes.tally_votes(regions)
+	query_result = Module_tally_votes.get_results(votes_per_region)
+	key = list(query_result.keys())
+	values = list(query_result.values())
+	print(key[0], values)
+	result = zip(key, values)
+	return render(request, "voting/tally.html", {'result': result})

@@ -22,4 +22,4 @@ def decrypt_sets(voter_name):
     decrypted_sets = str(Module_aes_encryption.decrypt(encrypted_sets, result[0][0]))
     return(decrypted_sets[2:len(decrypted_sets)-1])
     
-print(decrypt_sets('thirteen'))
+#print(decrypt_sets('thirteen'))

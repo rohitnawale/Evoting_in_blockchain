@@ -149,7 +149,6 @@ def get_betabit(ref_string, set_selected, beta_string):
                 betabit = beta_string[j]
             if ref_string[j] == 1 and beta_string[j] == 0:
                 betabit = beta_string[j]
-    print(betabit)
     return betabit
 
 

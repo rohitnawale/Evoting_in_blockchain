@@ -1,27 +1,34 @@
-import mysql.connector
+import traceback
+import pymysql
+import hashlib
+import base64
+from . import Module_aes_encryption
 from . import homomorphic
 
 
-
 #returns reference string and betabit for voter
-def get_strings(voter_id):
-    connection = mysql.connector.connect(host='localhost',
-                                         database='voting',
-                                         user='root',
-                                         password='mysql', auth_plugin='mysql_native_password')
-    mySql_select_query = """select homomorphic_sets from voter where voter_id=%s limit 1"""
-    cursor = connection.cursor()
-    cursor.execute(mySql_select_query, (voter_id,))
-    record = cursor.fetchall()
-    ref_string = ""
-    betabit = ""
-    ref_list = []
-    set_list = []
-    beta_list = []
-    for row in record:
-        strings = row[0].split(";")
-        ref_list.append(list(map(int, strings[0].split(","))))
-        beta_list.append(list(map(int, strings[2].split(","))))
-        betabit = homomorphic.get_betabit(ref_list[0], strings[1], beta_list[0])
-        ref_string = strings[0]
-    return ref_string, betabit
+def get_strings(voter_name):
+    # create a mysql connection
+    db = pymysql.connect("localhost","root","mysql","voting")
+    cursor = db.cursor()
+    try:
+        select_query = "select password, homomorphic_sets from tbl_voters where voter_name = '{}'".format(voter_name)
+        cursor.execute(select_query)
+        result = cursor.fetchall()
+        db.commit()
+    except:
+        print("Error while fetching password for encryption")
+        traceback.print_exc()
+        
+    # Let us decrypt using our original password
+    #print(result)
+    encrypted_sets = result[0][1][2:]
+    decrypted_sets = str(Module_aes_encryption.decrypt(encrypted_sets, result[0][0]))
+    strings = (decrypted_sets[2:len(decrypted_sets)-1]).split(";")
+    reference_String = list(map(int, strings[0].split(",")))
+    set = strings[1]
+    beta_string = list(map(int, strings[2].split(", ")))
+    beta_bit = homomorphic.get_betabit(reference_String, set, beta_string)
+    return reference_String, beta_bit
+
+#print(get_strings('thirteen'))

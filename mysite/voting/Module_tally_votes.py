@@ -1,5 +1,5 @@
 import mysql.connector
-import homomorphic
+from . import homomorphic
 
 
 #extracts the ref,set and beta strings of all voters in that region and returns the vote count
@@ -51,5 +51,5 @@ def get_regions():
 
 
 
-r = get_regions()
-tally_votes(r)
+#r = get_regions()
+#tally_votes(r)

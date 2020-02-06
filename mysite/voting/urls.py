@@ -8,4 +8,6 @@ urlpatterns = [
     path('castVote/', views.cast_vote, name='castVote'),
     path('done/', views.done, name='done'),
     path('home/', views.home, name='home'),
+    path('register/', views.register, name='register'),
+    path('checkVote/', views.checkVote, name='checkVote'),
 ]

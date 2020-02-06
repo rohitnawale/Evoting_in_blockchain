@@ -119,3 +119,15 @@ def done(request):
 		
 def home(request):
 	return render(request, 'voting/home.html')
+
+@csrf_exempt	
+def register(request):
+	if request.method == 'POST':
+		voter_id = request.POST.get('voter_id')
+		voter_name = request.POST.get('username')
+		age = request.POST.get('age')
+		region = request.POST.get('region')
+		password = request.POST.get('password')
+		print(voter_id, voter_name, age, region, password)
+		return render(request, "voting/home.html")
+	return render(request, 'voting/register.html')

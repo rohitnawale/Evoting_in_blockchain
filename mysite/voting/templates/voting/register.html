@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Welcome to Blockchain based voting</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{% load staticfiles %}
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="{% static 'voting/images/icons/favicon.ico'%}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/bootstrap/css/bootstrap.min.css'%}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/fonts/font-awesome-4.7.0/css/font-awesome.min.css'%}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/fonts/Linearicons-Free-v1.0.0/icon-font.min.css'%}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/animate/animate.css'%}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/css-hamburgers/hamburgers.min.css'%}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/vendor/select2/select2.min.css'%}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/css/util.css'%}">
+	<link rel="stylesheet" type="text/css" href="{% static 'voting/css/main.css'%}">
+<!--===============================================================================================-->
+
+
+<!--===============================================================================================-->
+</head>
+
+<script>
+
+	function validate_voter(){
+		
+		var voterID = document.getElementsByName('voterID')[0].value;
+		var username = document.getElementsByName('username')[0].value;
+		var age = document.getElementsByName('age')[0].value;
+		var region = document.getElementsByName('region')[0].value;
+		var password = document.getElementsByName('pass')[0].value;
+		var confirmpassword = document.getElementsByName('Confirmpass')[0].value;
+		
+		console.log(voterID, username, age, region, password, confirmpassword);
+		var errorMessage = '';
+		
+		if(age<18){
+		errorMessage += 'Age is incorrect!\n';
+		}
+		
+		if(password != confirmpassword){
+		
+		errorMessage += 'Password does not match!\n';
+		}
+		
+		if(errorMessage.length > 1){
+			alert(errorMessage);
+		} 
+		
+		else{
+			var query = "<form id = 'register' action = '/voting/register/' method = 'POST'> <input type = 'hidden' name = 'voter_id' value = '" + voterID.toString() + "'>  <input type = 'hidden' name = 'username' value = '" + username.toString() + "'> <input type = 'hidden' name = 'age' value = '" + age.toString() + "'> <input type = 'hidden' name = 'region' value = '" + region.toString() + "'> <input type = 'hidden' name = 'password' value = '" + password.toString() + "'>  </form>";
+		
+			document.write(query);
+			document.getElementById('register').submit();
+			alert("Registration Complete!!");
+		}
+	}
+	
+</script>
+
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-t-80 p-b-30">
+				<!-- <form class="login100-form validate-form"> -->
+					<!-- <div class="login100-form-avatar"> -->
+						<!-- <img src="images/avatar-01.jpg" alt="AVATAR"> -->
+					<!-- </div> -->
+
+					<span class="login100-form-title p-t-20 p-b-45">
+						Welcome to Blockchain based E-voting<br>
+						Please Enter the following details
+					</span>
+					<div class="row">
+					<div class = "col-md-2"></div>
+					<div class="col-md-8">
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "VoterID is required">
+						<input class="input100" type="text" name="voterID" placeholder="Voter ID">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-user"></i> -->
+						</span>
+					</div>
+					
+					
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Username is required">
+						<input class="input100" type="text" name="username" placeholder="Voter Name">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-user"></i> -->
+						</span>
+					</div>
+					
+					
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Age is required">
+						<input class="input100" type="number" name="age" placeholder="Age">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-user"></i> -->
+						</span>
+					</div>
+					
+					
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Age is required">
+						<input class="input100" type="text" name="region" placeholder="Region	">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-user"></i> -->
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">
+						<input class="input100" type="password" name="pass" placeholder="Password">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-lock"></i> -->
+						</span>
+					</div>
+					
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">
+						<input class="input100" type="password" name="Confirmpass" placeholder="Confirm Password">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-lock"></i> -->
+						</span>
+					</div>
+					
+					{% if message %}
+						<h4>&nbsp;&nbsp;&nbsp;&nbsp;* {{message}}*</h4>
+						<script>
+						window.history.replaceState({}, document.title, "/" + "voting/");
+						//location.reload();
+						</script>
+					{% endif %}
+					<div class="container-login100-form-btn p-t-10">
+						<button class="login100-form-btn" onclick = validate_voter()>
+							Register
+						</button>
+					</div>
+					</div>
+					<div class ="col-md-2"></div>
+					</div>
+					<!-- <div class="text-center w-full p-t-25 p-b-230"> -->
+						<!-- <a href="#" class="txt1"> -->
+							<!-- Forgot Username / Password? -->
+						<!-- </a> -->
+					<!-- </div> -->
+
+					<div class="text-center w-full">
+						<a class="txt1" href="#">
+							FAQs
+							<i class="fa fa-long-arrow-right"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;					
+						</a>
+						<a class="txt1" href="#">
+							Contact to ECI
+							<i class="fa fa-long-arrow-right"></i>						
+						</a>
+					</div>
+				<!-- </form> -->
+			</div>
+		</div>
+	</div>
+	
+	
+
+	
+<!--===============================================================================================-->	
+	<script src="{% static 'voting/vendor/jquery/jquery-3.2.1.min.js'%}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'voting/vendor/bootstrap/js/popper.js'%}"></script>
+	<script src="{% static 'voting/vendor/bootstrap/js/bootstrap.min.js'%}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'voting/vendor/select2/select2.min.js'%}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'voting/js/main.js'%}"></script>
+
+</body>
+</html>

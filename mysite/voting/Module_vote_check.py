@@ -1,5 +1,6 @@
 import mysql.connector
-import homomorphic
+from . import homomorphic
+
 
 
 #returns reference string and betabit for voter

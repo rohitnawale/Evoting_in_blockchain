@@ -141,6 +141,7 @@
 		console.log(username.length, password.length);
 		// Collecting server key and hashing it
 		var key = '{{key}}';
+		var checkvote = '{{checkVote}}';
 		var server_key = key.toString();
 		var server_key_hash = SHA256(server_key);
 		
@@ -155,8 +156,8 @@
 		//  generate combined hash i.e. (password + server_key + client_random_number)
 		var hash_all = SHA256(password_hash + server_key_hash + client_random_number_hash);
 		
-		console.log(username, hash_all, client_random_number_hash);
-		var query = "<form id = 'login' action = '/voting/' method = 'POST'> <input type = 'hidden' name = 'username' value = '" + username.toString() + "'> <input type = 'hidden' name = 'hash_all' value = '" + hash_all.toString() + "'> <input type = 'hidden' name = 'client_random_number_hash' value = '" + client_random_number_hash.toString() + "'></form>";
+		console.log(username, hash_all, client_random_number_hash, checkvote);
+		var query = "<form id = 'login' action = '/voting/' method = 'POST'> <input type = 'hidden' name = 'username' value = '" + username.toString() + "'> <input type = 'hidden' name = 'hash_all' value = '" + hash_all.toString() + "'> <input type = 'hidden' name = 'client_random_number_hash' value = '" + client_random_number_hash.toString() + "'>   <input type = 'hidden' name = 'checkvote' value = '" + checkvote.toString() + "'> </form>";
 		
 		console.log(query);
 		document.write(query);
@@ -211,7 +212,6 @@
 	}
 </script>
 <body>
-	
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-t-190 p-b-30">

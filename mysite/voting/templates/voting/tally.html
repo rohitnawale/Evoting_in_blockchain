@@ -1,6 +1,6 @@
 <html>
 	<head>
-	<title>Check Vote</title>
+	<title>Tally Votes</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		{% load staticfiles %}
@@ -52,39 +52,40 @@
 
 	<body>
 	<div class="topnav">
-		  <p> <a href="/voting/home">Logout</a></p><p>Hi, {{username}} </p>
+		  <p> <a href="/voting/home">Home</a></p>
 	</div>
 
 
 	<div class="limiter">
 		<div class="container-login100">
+			<div class="wrap-login100 p-t-80 p-b-30">
 			<!-- <div class="wrap-login100 p-t-190 p-b-30"> -->
-				<span class="login100-form-title p-t-20 p-b-45">
-					Welcome..{{username}}
+				<span class="login100-form-title p-t-10 p-b-355">
+					Region wise results
 				</span>
-				<table class="table"  style="color:white;">
-                    <tr>
-                        <td>Reference String</td>
-                        <td>{{ref_string}}</td>
-                    </tr>
-                    <tr>
-                        <td>Beta Bit</td>
-                        <td>{{beta_bit}}</td>
-                    </tr>
-                </table>
+				<!-- <div> -->
 
-				<div class ="row">
-				<div class = "col-md-3"></div>
-					<div class="col-md-10">
-				<div class="container-login100-form-btn p-t-10">
-						<a href = '/voting/home'>
-						<button class="login100-form-btn" onclick = next_page()>
-							Logout
-						</button>
-						</a>
-					</div>
-				</div>
-					<div class ="col-md-1"></div>
+						<br>
+						
+						<table class="table" style="color:white;">
+				            {% for row in result %}
+							<tr>
+								<td> Region </td>
+								<td> Candidate ID</td>
+								<td> Candidate Name</td>
+								<td> Party </td>
+							</tr>
+                            <tr>
+                                <td> {{row.0}} </td>
+                                <td> {{row.1.0}} </td>
+                                <td> {{row.1.1}} </td>
+                                <td> {{row.1.2}} </td>
+                            </tr>
+                            {% endfor %}
+				        </table>
+				<!-- </div> -->
+
+
 
 			</div>
 		</div>

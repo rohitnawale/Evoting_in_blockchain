@@ -28,6 +28,7 @@ contract Election_1_1{
        voters[voters.length-1].voterID = _voterID;
        voters[voters.length-1].voterDetailsHashed = _voterDetails;
        voters[voters.length-1].voteCastedDetailsHash = '';
+       index[_voterID] = voters.length-1;
 
        //return voters.length;
    }

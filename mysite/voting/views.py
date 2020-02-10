@@ -12,6 +12,7 @@ from . import homomorphic
 from . import Module_add_homomorphic_sets_to_database
 from . import Module_vote_check
 from . import Module_tally_votes
+from . import Module_add_voters_to_blockchain
 
 # Create your views here.
 @csrf_exempt
@@ -141,7 +142,12 @@ def register(request):
 		age = request.POST.get('age')
 		region = request.POST.get('region')
 		password = request.POST.get('password')
+		email = request.POST.get('email')
 		print(voter_id, voter_name, age, region, password)
+		try:
+			Module_add_voters_to_blockchain.add_new_voter_to_blockchain(int(voter_id), voter_name, password, age, region, email)
+		except:
+			return render(request, "voting/register", {'message': 'Error while registering new voter on blockchain'})
 		return render(request, "voting/home.html")
 	return render(request, 'voting/register.html')
 	

@@ -79,6 +79,9 @@
 					<span class="login100-form-title p-t-20 p-b-45">
 						Welcome to Blockchain based E-voting<br>
 						Please Enter the following details
+							{% if message %}
+							<h4 style = "color=black;">&nbsp;&nbsp;&nbsp;&nbsp;* {{message}}*</h4>
+							{% endif %}
 					</span>
 					<div class="row">
 					<div class = "col-md-2"></div>
@@ -100,6 +103,14 @@
 						</span>
 					</div>
 					
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "email is required">
+						<input class="input100" type="email" name="email" placeholder="Email">
+						<!-- <span class="focus-input100"></span> -->
+						<!-- <span class="symbol-input100"> -->
+							<!-- <i class="fa fa-user"></i> -->
+						</span>
+					</div>
+					
 					
 					<div class="wrap-input100 validate-input m-b-10" data-validate = "Age is required">
 						<input class="input100" type="number" name="age" placeholder="Age">
@@ -110,7 +121,7 @@
 					</div>
 					
 					
-					<div class="wrap-input100 validate-input m-b-10" data-validate = "Age is required">
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "region is required">
 						<input class="input100" type="text" name="region" placeholder="Region	">
 						<!-- <span class="focus-input100"></span> -->
 						<!-- <span class="symbol-input100"> -->

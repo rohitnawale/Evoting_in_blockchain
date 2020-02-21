@@ -13,6 +13,7 @@ from . import Module_add_homomorphic_sets_to_database
 from . import Module_vote_check
 from . import Module_tally_votes
 from . import Module_add_voters_to_blockchain
+from . import Module_change_status_after_voting
 
 # Create your views here.
 @csrf_exempt
@@ -102,9 +103,12 @@ def cast_vote(request):
 		print(list(map(int, ref_string.split(","))), set_selected, int(candidate_id), "fjkdfvhkjfd",int(candidate_index))
 		beta_string = homomorphic.encrypt(list(map(int, ref_string.split(","))), set_selected, int(candidate_index))
 		homomorphic_sets = str(ref_string) + ";" + str(set_selected) + ";"+ str(beta_string)
-		Module_add_homomorphic_sets_to_database.add_sets_to_database(str(homomorphic_sets).replace("[", "").replace("]",""), username)
+		encrypted_sets = Module_add_homomorphic_sets_to_database.add_sets_to_database(str(homomorphic_sets).replace("[", "").replace("]",""), username)
 		#if Module_add_homomorphic_sets_to_database.add_sets_to_blockchain(str(homomorphic_sets).replace("[", "").replace("]",""), username):
-		return render(request, 'voting/done.html', {'ref_string': ref_string, 'set':set_selected, 'beta_string':beta_string, 'username':username})
+		if Module_change_status_after_voting.change_status_to_yes_blockchain(username, encrypted_sets):
+			return render(request, 'voting/done.html', {'ref_string': ref_string, 'set':set_selected, 'beta_string':beta_string, 'username':username})
+		
+			#return render(request, 'voting/done.html', {'status':'failed'})
 	else:
 		if str(username) != "None":
 			result = Module_get_candidate.get_candidates('nigdi')

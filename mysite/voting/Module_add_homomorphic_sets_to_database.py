@@ -21,7 +21,7 @@ def add_sets_to_database(homomorphic_sets, voter_name):
         cursor.execute(insert_query)
         db.commit()
         cursor.close()
-        return True
+        return encrypted_sets
     except:
         print("Error while inserting new voter data to local DB")
         traceback.print_exc()
@@ -43,15 +43,16 @@ def add_sets_to_blockchain(homomorphic_sets, voter_name):
     voter_id = result[0][0]
     hashed_string = str(hashlib.sha256(str(homomorphic_sets).encode()).hexdigest())
     
-    ganache_url = "http://127.0.0.1:7545"
+    ganache_url = "http://127.0.0.1:8545"
     #connect to local private blockchain on ganache 
     web3 = Web3(Web3.HTTPProvider(ganache_url))
     #print(web3.isConnected())
     if web3.isConnected():
-        abi = json.loads('[{"constant":false,"inputs":[{"name":"_voterID","type":"uint256"},{"name":"_details","type":"string"}],"name":"addCastedDetailsHash","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getVoterCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_voterID","type":"uint256"},{"name":"_voterDetails","type":"string"}],"name":"addVoter","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"votersCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_voterID","type":"uint256"}],"name":"getVoter","outputs":[{"name":"","type":"uint256"},{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"voters","outputs":[{"name":"voterID","type":"uint256"},{"name":"voterDetailsHashed","type":"string"},{"name":"voteCastedDetailsHash","type":"string"}],"payable":false,"stateMutability":"view","type":"function"}]')
+        # load the json data which can be obtained after deploying smart contracts
+        abi = json.loads(' [{"constant":false,"inputs":[{"name":"_voterID","type":"uint256"},{"name":"_details","type":"string"}],"name":"addCastedDetailsHash","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getVoterCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_voterID","type":"uint256"},{"name":"_voterDetails","type":"string"}],"name":"addVoter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"votersCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_voterID","type":"uint256"}],"name":"getVoter","outputs":[{"name":"","type":"uint256"},{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"voters","outputs":[{"name":"voterID","type":"uint256"},{"name":"voterDetailsHashed","type":"string"},{"name":"voteCastedDetailsHash","type":"string"}],"payable":false,"stateMutability":"view","type":"function"}]')
 
         # load the address where smart contracts are deployed
-        address = web3.toChecksumAddress('0x8C0AAe119A1143b5244Aa67f8e74E214F6f10cd0')
+        address = web3.toChecksumAddress('0x8A707F18f249CfE5D15bEb10e0c34CcEC2785C86')
 
 
         # establish the connection with blockchain using address and ABI
@@ -60,11 +61,11 @@ def add_sets_to_blockchain(homomorphic_sets, voter_name):
         # get voter details from blockchain based on voter_id
         try:
             # create a transaction on blockchain to add the new voter details using the private key
-            tx_hash = contract.functions.addCastedDetailsHash(voter_id, hashed_string).transact({'from':'0x2c08A59BB7989dFea6d9366552bC7E233a2dbD21', 'gas': 3400000})
+            tx_hash = contract.functions.addCastedDetailsHash(voter_id, hashed_string).transact({'from':web3.toChecksumAddress('0x74a625b67a5acd0d1b44e3185e65b9d9835925a3'), 'gas': 3400000})
             #tx_hash = contract.functions.addVoter(voter_name, age, region).transact({'from':'0x2c08A59BB7989dFea6d9366552bC7E233a2dbD21', 'gas': 3400000})
             
             # wait for the block to be  mined on blockchain
-            web3.eth.waitForTransactionReceipt(tx_hash)
+            #web3.eth.waitForTransactionReceipt(tx_hash)
             return True
 
         except:

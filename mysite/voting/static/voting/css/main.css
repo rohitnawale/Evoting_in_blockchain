@@ -74,6 +74,28 @@ p {
 	margin: 0px;
 }
 
+/* Top Nav */
+
+	.topnav {
+		overflow: hidden;
+		background-color: #333;
+
+	}
+
+	.topnav p {
+		float: right;
+		color: #f2f2f2;
+		text-align: center;
+		padding: 14px 16px;
+		text-decoration: none;
+		font-size: 17px;
+	}
+
+	.topnav p:hover {
+		background-color: #ddd;
+		color: black;
+	}
+
 
 /*---------------------------------------------*/
 input {

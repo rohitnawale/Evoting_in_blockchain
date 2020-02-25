@@ -274,11 +274,13 @@
 						</span>
 					</div>
 					{% if message %}
-						<h4>&nbsp;&nbsp;&nbsp;&nbsp;* {{message}}*</h4>
-						<script>
-						window.history.replaceState({}, document.title, "/" + "voting/");
-						//location.reload();
-						</script>
+						<span class="login100-form-title p-t-10 p-b-15">
+							<h4>&nbsp;&nbsp;&nbsp;&nbsp;* {{message}}*</h4>
+							<script>
+							window.history.replaceState({}, document.title, "/" + "voting/");
+							//location.reload();
+							</script>
+						</span>
 					{% endif %}
 					<div class="container-login100-form-btn p-t-10">
 						<button class="login100-form-btn" onclick = validate_voter()>
@@ -289,7 +291,7 @@
 					<div class ="col-md-2"></div>
 					</div>
 					<div class="text-center w-full p-t-25 p-b-230">
-						<a href="#" class="txt1">
+						<a href="/voting/forgot_password" class="txt1">
 							Forgot Username / Password?
 						</a>
 					</div>

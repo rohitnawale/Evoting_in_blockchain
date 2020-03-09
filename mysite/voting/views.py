@@ -45,17 +45,20 @@ def index (request):
         db = pymysql.connect("localhost","root","mysql","voting")
         cursor = db.cursor()
         # fetch the password from mysql
-        query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}"'.format(username)
+        query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}" and status = "No"'.format(username)
         try:
             cursor.execute(query)
             result = cursor.fetchall()
         except:
             traceback.print_exc()
+            return render(request, 'voting/index.html', {'message':'Voter Details Not Found!!'})
             
         # get the hashed password from db
-        hash_from_db = str(result[0][0])
-        voter_id = result[0][1]
-        
+        try:
+            hash_from_db = str(result[0][0])
+            voter_id = result[0][1]
+        except:
+            return render(request, 'voting/index.html', {'message':'Voter Details Not Found!!'})
         #hash of the server_key
         fh = open('serverkey.txt', 'r')
         key = fh.read()

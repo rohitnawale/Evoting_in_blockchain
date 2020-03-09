@@ -6,11 +6,14 @@ import hashlib
 
 def change_status_to_yes_sql(voter_name):
     # create a mysql connection
+    print("Changing status to yes after voting")
     db = pymysql.connect("localhost","root","mysql","voting")
     cursor = db.cursor()
     try:
         update_query = "update tbl_voters set status = 'yes' where voter_name = '{}'".format(voter_name)
         cursor.execute(update_query)
+        db.commit()
+        cursor.close()
         return True
         
     except:

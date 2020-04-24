@@ -3,6 +3,10 @@ from . import homomorphic
 from . import Module_get_candidate
 from . import Module_aes_encryption
 
+# import homomorphic
+# import Module_get_candidate
+# import Module_aes_encryption
+
 
 #extracts the ref,set and beta strings of all voters in that region and returns the vote count
 def tally_votes(regions):
@@ -12,30 +16,31 @@ def tally_votes(regions):
                                          user='root',
                                          password='mysql', auth_plugin='mysql_native_password')
     for region in regions:
-        mySql_select_query = """select password, homomorphic_sets from tbl_voters where region=%s"""
+        mySql_select_query = """select password, homomorphic_sets from tbl_voters where region=%s and homomorphic_sets is not null"""
         cursor = connection.cursor()
         cursor.execute(mySql_select_query, (region,))
         record = cursor.fetchall()
         ref_list = []
         set_list = []
         beta_list = []
-        # print(record)
-        for row in record:
-            # print(row)
-            encrypted_sets = str(row[1][2:])
-            row = str(Module_aes_encryption.decrypt(encrypted_sets, row[0])).replace("'","").replace("b","")
-            strings = row.split(";")
-            # print("strings", strings)
-            ref_list.append(list(map(int,strings[0].split(","))))
-            set_list.append(list(strings[1].split(",")))
-            beta_list.append(list(map(int,strings[2].split(", "))))
-            # print("ref = ", strings[0])
-            # print("set = ", strings[1])
-            # print("beta = ", strings[2], "\n")
-        cursor.close()
+        print(record)
+        if len(record)>0:
+            for row in record:
+                print(row)
+                encrypted_sets = str(row[1][2:])
+                row = str(Module_aes_encryption.decrypt(encrypted_sets, row[0])).replace("'","").replace("b","")
+                strings = row.split(";")
+                print("strings", strings)
+                ref_list.append(list(map(int,strings[0].split(","))))
+                set_list.append(list(strings[1].split(",")))
+                beta_list.append(list(map(int,strings[2].split(", "))))
+                print("ref = ", ref_list)
+                # print("set = ", strings[1])
+                # print("beta = ", strings[2], "\n")
+            cursor.close()
 
-        vote_count = homomorphic.decrypt(ref_list, set_list, beta_list)
-        region_results.update({region:vote_count})
+            vote_count = homomorphic.decrypt(ref_list, set_list, beta_list)
+            region_results.update({region:vote_count})
     connection.close
     # print(region_results)
     return region_results

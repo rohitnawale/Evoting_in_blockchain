@@ -22,6 +22,7 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'voting/css/util.css'%}">
 		<link rel="stylesheet" type="text/css" href="{% static 'voting/css/main.css'%}">
 	<!--===============================================================================================-->
+	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 	<style>
 				.topnav {
@@ -50,24 +51,32 @@
 	</style>
 	</head>
 	
+	<script>
+		function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+	
+	</script>
+	
 	<body>	
-	<div class="topnav">
+	<div class="topnav"  id="google_translate_element">
+			<!-- <div id="google_translate_element"></div> -->
 		  <p> <a href="/voting/home">Logout</a></p><p>Hi, {{username}} </p> 
 	</div>
 	
 	
 	<div class="limiter">
 		<div class="container-login100">
-			<!-- <div class="wrap-login100 p-t-190 p-b-30"> -->
+			<div class="wrap-login100 p-t-50 p-b-30">
 				<span class="login100-form-title p-t-20 p-b-45">
-					Welcome..{{username}}
+					Welcome.. {{username}}
 				</span>
-				<!-- <div> -->
+				
 						
 						<br>
 						<h4 style="color=white;">
 						Please read the following instructions:
-						<br><br><br><br><br>
+						<br><br><br>
 						<ul type="square">  
 						<li>The Voting Timer has started: You have 2 Minutes to cast the vote.</li>  
 						<li>Please follow the timer appearing in the top right corner of the screen.</li>  
@@ -77,8 +86,8 @@
 						</h4>
 				<!-- </div> -->
 				<!-- <div class="row"> -->
-				<div class = "col-md-2"></div>
-					<div class="col-md-8">
+				<div class = "col-md-1"></div>
+					<div class="col-md-9">
 				<div class="container-login100-form-btn p-t-10">
 						<a href = '/voting/castVote/?username={{username}}'>
 						<button class="login100-form-btn" onclick = next_page()>

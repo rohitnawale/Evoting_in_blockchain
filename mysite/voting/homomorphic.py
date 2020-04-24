@@ -84,7 +84,7 @@ def encrypt(ref_list, set_selected, vote_index):
 def decrypt(ref_list, set_list, beta_list):
     vote_count = []
     #initialise the count for each candidate to zero
-    for i in range(ref_list[0].__len__()):
+    for i in range(len(ref_list[0])):
         vote_count.append(0)
     set_A = [[0, 'Y', 1], [1, 'Y', 0], [0, 'N', 0], [1, 'N', 1]]
     set_B = [[0, 'Y', 1], [1, 'Y', 1], [0, 'N', 0], [1, 'N', 0]]

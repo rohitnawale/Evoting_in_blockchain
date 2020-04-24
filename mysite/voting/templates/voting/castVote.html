@@ -22,6 +22,8 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'voting/css/util.css'%}">
 		<link rel="stylesheet" type="text/css" href="{% static 'voting/css/main.css'%}">
 	<!--===============================================================================================-->
+	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 
 		<style>
 				.topnav {
@@ -112,7 +114,7 @@ body {
 .bg-gradient-4 {
     background: #007991;
     background: -webkit-linear-gradient(to right, #007991, #78ffd6);
-    background: linear-gradient(to right, black, grey);
+    background: linear-gradient(to right, red, tomato);
 }
 
 
@@ -190,17 +192,20 @@ window.onload = function () {
     startTimer(fiveMinutes, display);
 };
 		
+	function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
 		
 	</script>
 	
-	<div class="topnav">
+	<div class="topnav"  id="google_translate_element">
 		  <p> <a href="/voting/home">Logout</a></p><p>Hi, {{username}} </p> 
 	</div>
 	<!-- <div class="py-5"> -->
         <!-- <div class="row"> -->
             <!-- <div class="col-lg-8 mx-auto"> -->
 				<div class="rounded bg-gradient-4 text-white shadow p-5 text-center ">
-					<div>Time remaining to cast your vote : <span id="time">02:00</span> minutes!</div>
+					<div>Time remaining  : <span id="time">02:00</span> minutes!</div>
 				</div>
 			<!-- </div> -->
 		<!-- </div> -->
@@ -209,9 +214,15 @@ window.onload = function () {
 		
 		<div class="container-login100">
 			
-			<h1><b>You are voting with set {{set_selected}}</b></h1><br><br>
+			<h1><b>You are voting with set {{set_selected}}</b></h1><br>
 			
 				<table class="table" style="color:white";>
+				<tr>
+					<td><h4><b>Ref String<b><h4></h4></td>
+					<td><h4><b>Candidate Name<b></h4></td>
+					<td><h4><b>Candidate Party<b></h4></td>
+					<td><h4><b>Choose<b></h4></td>
+				</tr>
 				{% for ele, row in combined_set %}
 					<tr id="{{row.0}}">
 						<td>{{ele}}</td>

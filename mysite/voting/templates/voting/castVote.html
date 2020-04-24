@@ -214,9 +214,15 @@ window.onload = function () {
 		
 		<div class="container-login100">
 			
-			<h1><b>You are voting with set {{set_selected}}</b></h1><br><br>
+			<h1><b>You are voting with set {{set_selected}}</b></h1><br>
 			
 				<table class="table" style="color:white";>
+				<tr>
+					<td><h4><b>Ref String<b><h4></h4></td>
+					<td><h4><b>Candidate Name<b></h4></td>
+					<td><h4><b>Candidate Party<b></h4></td>
+					<td><h4><b>Choose<b></h4></td>
+				</tr>
 				{% for ele, row in combined_set %}
 					<tr id="{{row.0}}">
 						<td>{{ele}}</td>

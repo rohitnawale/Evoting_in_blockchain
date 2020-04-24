@@ -45,20 +45,25 @@ def index (request):
         db = pymysql.connect("localhost","root","mysql","voting")
         cursor = db.cursor()
         # fetch the password from mysql
-        query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}" and status = "No"'.format(username)
+        print(checkVote)
+        if len(client_check_vote) > 5:
+            query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}"'.format(username)
+        else:
+            query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}" and status = "No"'.format(username)
+        print(query)
         try:
             cursor.execute(query)
             result = cursor.fetchall()
         except:
             traceback.print_exc()
-            return render(request, 'voting/index.html', {'message':'Voter Details Not Found!!'})
+            return render(request, 'voting/index.html', {'message':'Voter Details Not Found!!Error while fetching'})
             
         # get the hashed password from db
         try:
             hash_from_db = str(result[0][0])
             voter_id = result[0][1]
         except:
-            return render(request, 'voting/index.html', {'message':'Voter Details Not Found!!'})
+            return render(request, 'voting/index.html', {'message':'Voter Details Not Found!!Error while validating'})
         #hash of the server_key
         fh = open('serverkey.txt', 'r')
         key = fh.read()
@@ -158,7 +163,7 @@ def register(request):
         try:
             Module_add_voters_to_blockchain.add_new_voter_to_blockchain(int(voter_id), voter_name, password, age, region, email)
         except:
-            return render(request, "voting/register", {'message': 'Error while registering new voter on blockchain'})
+            return render(request, "voting/register.html", {'message': 'Error while registering new voter on blockchain'})
         return render(request, "voting/home.html")
     return render(request, 'voting/register.html')
     

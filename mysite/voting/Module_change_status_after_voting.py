@@ -52,8 +52,22 @@ def change_status_to_yes_blockchain(voter_name, encrypted_sets):
         # establish the connection with blockchain using address and ABI
         contract = web3.eth.contract(address=address, abi = abi)
         
+        #unlock the geth account to create transaction
+        try:
+            web3.geth.personal.unlockAccount(web3.toChecksumAddress("0x74a625b67a5acd0d1b44e3185e65b9d9835925a3"), "s492")
+            web3.geth.personal.unlockAccount(web3.toChecksumAddress("0x63ce142723bf1cd4205708cfb329b44bd4783452"), "s492")
+        except:
+            print("Error while unlocking geth account")
+            traceback.print_exc()
+            return False
         # create a transaction on blockchain to add the new voter details using the private key
-        tx_hash = contract.functions.addCastedDetailsHash(int(voter_id), encrypted_sets).transact({'from':web3.toChecksumAddress('0x74a625b67a5acd0d1b44e3185e65b9d9835925a3'), 'gas': 3400000})
+        try:
+            tx_hash = contract.functions.addCastedDetailsHash(int(voter_id), encrypted_sets).transact({'from':web3.toChecksumAddress('0x74a625b67a5acd0d1b44e3185e65b9d9835925a3'), 'gas': 3400000})
+            
+        except:
+            print("Error while creating transaction")
+            traceback.print_exc()
+            return False
         #tx_hash = contract.functions.addVoter(voter_name, age, region).transact({'from':'0x2c08A59BB7989dFea6d9366552bC7E233a2dbD21', 'gas': 3400000})
         
         # wait for the block to be  mined on blockchain

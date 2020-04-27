@@ -159,12 +159,15 @@ def register(request):
         region = request.POST.get('region')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        print(voter_id, voter_name, age, region, password)
+        print(voter_id, voter_name, age, region, password, email)
         try:
-            Module_add_voters_to_blockchain.add_new_voter_to_blockchain(int(voter_id), voter_name, password, age, region, email)
+            status = Module_add_voters_to_blockchain.add_new_voter_to_blockchain(int(voter_id), voter_name, password, age, region, email)
         except:
             return render(request, "voting/register.html", {'message': 'Error while registering new voter on blockchain'})
-        return render(request, "voting/home.html")
+        if status == "SUCCESS":
+            return render(request, 'voting/registerSuccess.html', {'user': voter_name})
+        else:
+            return render(request, "voting/register.html", {'message': 'Error while registering new voter on blockchain'})
     return render(request, 'voting/register.html')
     
 def checkVote(request):
@@ -212,6 +215,10 @@ def newPassword(request):
         else:
             print(ret)
             return render(request, 'voting/index.html',{'message':'Password Updation Unsuccessful'})
+            
+def registerSuccess(request):
+    return render(request, 'voting/registerSuccess.html', {'user': 'demo'})
 
-
+def about(request):
+    return render(request, 'voting/about.html')
         

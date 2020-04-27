@@ -51,7 +51,7 @@ def add_new_voter_to_blockchain(voter_id, voter_name, password, age, region, ema
     #connect to local private blockchain on ganache
     web3 = Web3(Web3.HTTPProvider(ganache_url))
 
-    #print(web3.isConnected())
+    print(web3.isConnected())
     
     if web3.isConnected():
         # load the json data which can be obtained after deploying smart contracts
@@ -63,10 +63,22 @@ def add_new_voter_to_blockchain(voter_id, voter_name, password, age, region, ema
         # establish the connection with blockchain using address and ABI
         contract = web3.eth.contract(address=address, abi = abi)
         
+        #unlock the geth account to create transaction
+        try:
+            web3.geth.personal.unlockAccount(web3.toChecksumAddress("0x74a625b67a5acd0d1b44e3185e65b9d9835925a3"), "s492")
+            web3.geth.personal.unlockAccount(web3.toChecksumAddress("0x63ce142723bf1cd4205708cfb329b44bd4783452"), "s492")
+        except:
+            print("Error while unlocking geth account")
+            traceback.print_exc()
+            return False
+
         # create a transaction on blockchain to add the new voter details using the private key
-        tx_hash = contract.functions.addVoter(voter_id, hashed_string).transact({'from':web3.toChecksumAddress("0x74a625b67a5acd0d1b44e3185e65b9d9835925a3"), 'gas': 3400000})
+        try:
+            tx_hash = contract.functions.addVoter(voter_id, hashed_string).transact({'from':web3.toChecksumAddress("0x74a625b67a5acd0d1b44e3185e65b9d9835925a3"), 'gas': 3400000})
         #tx_hash = contract.functions.addVoter(voter_name, age, region).transact({'from':'0x2c08A59BB7989dFea6d9366552bC7E233a2dbD21', 'gas': 3400000})
-        
+        except:
+            print("Error while creating transaction")
+            return False
         # wait for the block to be  mined on blockchain
         print("wait for the block to be  mined on blockchain")
         #web3.eth.waitForTransactionReceipt(tx_hash)
@@ -81,6 +93,7 @@ def add_new_voter_to_blockchain(voter_id, voter_name, password, age, region, ema
         #for i in current_voter:
         print(current_voter[0])
         print(current_voter[1])
+        return "SUCCESS"
         #voterDetailsHashed = current_voter[1].hex().rstrip("0x")
         #print(bytes.fromhex(str(voterDetailsHashed)).decode('utf-8'))
         # print(str(current_voter[2][2:], "utf-8"))

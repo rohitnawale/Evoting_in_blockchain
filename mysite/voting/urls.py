@@ -15,4 +15,5 @@ urlpatterns = [
 	path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('enterOTP/', views.enterOTP, name='enterOTP'),
     path('newPassword/', views.newPassword , name='newPassword'),
+    path('about/', views.about, name='about')
 ]

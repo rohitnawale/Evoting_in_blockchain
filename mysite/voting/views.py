@@ -219,5 +219,6 @@ def newPassword(request):
 def registerSuccess(request):
     return render(request, 'voting/registerSuccess.html', {'user': 'demo'})
 
-
+def about(request):
+    return render(request, 'voting/about.html')
         

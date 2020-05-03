@@ -29,6 +29,12 @@
 <!--===============================================================================================-->
 </head>
 <style>
+        .footer{
+                color: white;   
+                border-top: 1px solid #f8f6f6;
+                padding-top: 16px;
+                text-align: center;
+            }
 		.topnav {
 		  overflow: hidden;
 		  background-color: #333;
@@ -162,7 +168,7 @@
 			alert("Please enter username and password!");
 			//location.reload();
 		}
-		console.log(username.length, password.length);
+		//console.log(username.length, password.length);
 		// Collecting server key and hashing it
 		var key = '{{key}}';
 		var checkvote = '{{checkVote}}';
@@ -308,8 +314,21 @@
 					</div>
 				<!-- </form> -->
 			</div>
+             <div class="footer">
+                <h5>© E-voting in Blockchain</h5>
+                <br>
+                <p><a href="/voting/about">About Us</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <a href="/voting/about">Privacy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <a href="/voting/about">Terms of Use</a>  
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="/voting/about">Cookies</a></p><br>
+                <h6>Pune, India 2020</h6>
 		</div>
+       
+    </div>
 	</div>
+    
+    
 	
 	
 

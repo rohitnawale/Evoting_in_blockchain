@@ -5,9 +5,11 @@ import random
 import pymysql
 from django.views.decorators.csrf import csrf_exempt
 import traceback
+import jwt
 import hashlib
 from numpy.random import randint
 import smtplib
+from . import Module_has_already_voted
 from . import Module_get_voterdata_from_blockchain
 from . import Module_get_candidate
 from . import homomorphic
@@ -40,6 +42,8 @@ def index (request):
         
     # if it is a login request
     if username != None:
+        if(Module_has_already_voted.has_already_voted(str(username)) == True and len(client_check_vote)<5):
+                return render(request, 'voting/index.html', {'message':'You have already voted!'})
         # create a mysql connection
         print(username, password, client_random_number_hash)
         db = pymysql.connect("localhost","root","mysql","voting")
@@ -47,6 +51,8 @@ def index (request):
         # fetch the password from mysql
         print(checkVote)
         if len(client_check_vote) > 5:
+            if(Module_has_already_voted.has_already_voted(str(username)) == False):
+                return render(request, 'voting/index.html', {'message':'You have not voted yet!'})
             query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}"'.format(username)
         else:
             query = 'select password, voter_id from voting.tbl_voters where voter_name = "{}" and status = "No"'.format(username)
@@ -81,8 +87,15 @@ def index (request):
                 #return HttpResponse(json.dumps(response_data), content_type="application/json")
                 if len(client_check_vote)>5:
                     ref_string, beta_bit = Module_vote_check.get_strings(username)
-                    return render(request, 'voting/checkVote.html', {'username':username, 'ref_string':ref_string, 'beta_bit':beta_bit})
-                return render(request,'voting/instructions.html', {'username':username})
+                    response = render(request, 'voting/checkVote.html', {'username':username, 'ref_string':ref_string, 'beta_bit':beta_bit})
+                    jwt_token = {'token': jwt.encode({'id':username}, "SECRET_KEY")}
+                    response.set_cookie(key='jwt-token', value= jwt_token.get('token'))
+                    return response
+
+                jwt_token = {'token': jwt.encode({'id':username}, "SECRET_KEY")}
+                response = render(request,'voting/instructions.html', {'username':username})
+                response.set_cookie(key='jwt-token', value= jwt_token.get('token'))
+                return response
             else:
                 return render(request, 'voting/index.html', {'message':'Voter is not registered on blockchain'})
         else:
@@ -93,43 +106,64 @@ def index (request):
     return render(request, 'voting/index.html', {'key':key})
 
 def instructions(request):
-    # username = request.POST.get('username')
-    # password = request.POST.get('hash_all')
-    # client_random_number_hash = request.POST.get('client_random_number_hash')
-    # print(username, password, client_random_number_hash)
-    username = request.GET.get('username')
-    if username != None:
-        return render(request, 'voting/instructions.html')
-    else:
-        return index(request)
+    try:
+        # username = request.GET.get('username')
+        jwt_token = str(request.COOKIES['jwt-token'])
+        print(jwt_token)
+    except:
+        key = int(random.uniform(0,100000))
+        fh = open('serverkey.txt', 'w')
+        fh.write(str(key))
+        return render(request, 'voting/index.html', {'key':key})
+    # if username != None and len(jwt_token)>10:
+        # return render(request, 'voting/instructions.html')
+    # else:
+        # return index(request)
     
 def cast_vote(request):
-    username = request.GET.get('username')
-    
+    try:
+        username = request.GET.get('username')
+        jwt_token = request.COOKIES['jwt-token']
+    except:
+        key = int(random.uniform(0,100000))
+        fh = open('serverkey.txt', 'w')
+        fh.write(str(key))
+        return render(request, 'voting/index.html', {'key':key})
+    print(jwt_token)
     if request.method == "POST":
-        ref_string = request.POST.get('ref_string')
-        set_selected = request.POST.get('set_selected')
-        candidate_id = request.POST.get('candidate_id')
-        candidate_index = request.POST.get('candidate_index')
-        username = request.POST.get('username')
-        print(list(map(int, ref_string.split(","))), set_selected, int(candidate_id), "fjkdfvhkjfd",int(candidate_index))
-        beta_string = homomorphic.encrypt(list(map(int, ref_string.split(","))), set_selected, int(candidate_index))
-        homomorphic_sets = str(ref_string) + ";" + str(set_selected) + ";"+ str(beta_string)
-        encrypted_sets = Module_add_homomorphic_sets_to_database.add_sets_to_database(str(homomorphic_sets).replace("[", "").replace("]",""), username)
-        #if Module_add_homomorphic_sets_to_database.add_sets_to_blockchain(str(homomorphic_sets).replace("[", "").replace("]",""), username):
-        if Module_change_status_after_voting.change_status_to_yes_blockchain(username, encrypted_sets):
-            return render(request, 'voting/done.html', {'ref_string': ref_string, 'set':set_selected, 'beta_string':beta_string, 'username':username})
-        
+        if(Module_has_already_voted.has_already_voted(username) == False):
+            ref_string = request.POST.get('ref_string')
+            set_selected = request.POST.get('set_selected')
+            candidate_id = request.POST.get('candidate_id')
+            candidate_index = request.POST.get('candidate_index')
+            username = request.POST.get('username')
+            print(list(map(int, ref_string.split(","))), set_selected, int(candidate_id), "fjkdfvhkjfd",int(candidate_index))
+            beta_string = homomorphic.encrypt(list(map(int, ref_string.split(","))), set_selected, int(candidate_index))
+            homomorphic_sets = str(ref_string) + ";" + str(set_selected) + ";"+ str(beta_string)
+            encrypted_sets = Module_add_homomorphic_sets_to_database.add_sets_to_database(str(homomorphic_sets).replace("[", "").replace("]",""), username)
+            #if Module_add_homomorphic_sets_to_database.add_sets_to_blockchain(str(homomorphic_sets).replace("[", "").replace("]",""), username):
+            if Module_change_status_after_voting.change_status_to_yes_blockchain(username, encrypted_sets):
+                return render(request, 'voting/done.html', {'ref_string': ref_string, 'set':set_selected, 'beta_string':beta_string, 'username':username})
+        else:
+                response = render(request, 'voting/logout.html', {'message':'You have already voted!'})
+                response.delete_cookie('jwt-token')
+                return response
+                
             #return render(request, 'voting/done.html', {'status':'failed'})
     else:
         if str(username) != "None":
-            result = Module_get_candidate.get_candidates('nigdi')
-            total_candidate_count = len(result)
-            ref_string = homomorphic.create_ref(total_candidate_count)
-            set_selected = homomorphic.select_set()
-            combined_set = zip(ref_string, result)
-            print(combined_set)
-            return render(request, 'voting/castVote.html', {'result': result, 'combined_set': combined_set, 'set_selected': set_selected, 'ref_string': ref_string, 'username':username})
+            if(Module_has_already_voted.has_already_voted(username) == False):
+                result = Module_get_candidate.get_candidates('nigdi')
+                total_candidate_count = len(result)
+                ref_string = homomorphic.create_ref(total_candidate_count)
+                set_selected = homomorphic.select_set()
+                combined_set = zip(ref_string, result)
+                print(combined_set)
+                response = render(request, 'voting/castVote.html', {'result': result, 'combined_set': combined_set, 'set_selected': set_selected, 'ref_string': ref_string, 'username':username})
+                #response.delete_cookie('jwt-token')
+                return response
+            else:
+                return render(request, 'voting/logout.html', {'message':'You have already voted!'})
         else:
             key = int(random.uniform(0,100000))
             fh = open('serverkey.txt', 'w')
@@ -138,14 +172,27 @@ def cast_vote(request):
 
         
 def done(request):
-    username = request.GET.get('username')
-    if str(username) != "None":
-        return render(request, 'voting/done.html', {'username':username})
-    else:
+    try:
+        jwt_token = request.COOKIES['jwt-token']
+    except:
         key = int(random.uniform(0,100000))
         fh = open('serverkey.txt', 'w')
         fh.write(str(key))
         return render(request, 'voting/index.html', {'key':key})
+  
+def logout(request):
+    try:
+        jwt_token = request.COOKIES['jwt-token']
+        print(jwt_token)
+        response = render(request, 'voting/logout.html', {'message':"You have been logged out"})
+        response.delete_cookie('jwt-token')
+        return response
+    except:
+        key = int(random.uniform(0,100000))
+        fh = open('serverkey.txt', 'w')
+        fh.write(str(key))
+        return render(request, 'voting/index.html', {'key':key})
+        
         
 def home(request):
     return render(request, 'voting/home.html')

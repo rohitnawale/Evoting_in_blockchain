@@ -179,7 +179,7 @@ body {
 
         if (--timer < 0) {
            //timer = duration;
-		   var query = '<form action = "/voting/" method = "POST" id = "redirect" > {% csrf_token %}</form>';
+		   var query = '<form action = "/voting/logout" method = "GET" id = "redirect" ><input type = "hidden" name = "username" value = "{{username}}"></form>';
 		   document.write(query);
 		   document.getElementById("redirect").submit();
         }
@@ -187,7 +187,7 @@ body {
 }
 
 window.onload = function () {
-    var fiveMinutes = 60 * 2,
+    var fiveMinutes = 5,
         display = document.querySelector('#time');
     startTimer(fiveMinutes, display);
 };
@@ -199,7 +199,7 @@ window.onload = function () {
 	</script>
 	
 	<div class="topnav"  id="google_translate_element">
-		  <p> <a href="/voting/logout">Logout</a></p><p>Hi, {{username}} </p> 
+		  <p> <a href="/voting/logout?username={{username}}">Logout</a></p><p>Hi, {{username}} </p> 
 	</div>
 	<!-- <div class="py-5"> -->
         <!-- <div class="row"> -->

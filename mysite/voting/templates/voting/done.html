@@ -50,7 +50,7 @@
 	<body>
 	
 	<div class="topnav">
-		  <p> <a href="/voting/logout">Logout</a></p><p>Hi, {{username}} </p> 
+		  <p> <a href="/voting/logout?username={{username}}">Logout</a></p><p>Hi, {{username}} </p> 
 	</div>
 	
 	<div class="limiter">
@@ -65,7 +65,7 @@
 				<div class = "col-md-3"></div>
 					<div class="col-md-10">
 				<div class="container-login100-form-btn p-t-10">
-						<a href = '/voting/logout'>
+						<a href = '/voting/logout?username={{username}}'>
 						<button class="login100-form-btn" onclick = next_page()>
 							Logout
 						</button>

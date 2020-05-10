@@ -19,6 +19,7 @@ from . import Module_tally_votes
 from . import Module_add_voters_to_blockchain
 from . import Module_change_status_after_voting
 from . import Module_send_mail
+from . import Module_jwt
 import smtplib
 
 # Create your views here.
@@ -89,12 +90,14 @@ def index (request):
                     ref_string, beta_bit = Module_vote_check.get_strings(username)
                     response = render(request, 'voting/checkVote.html', {'username':username, 'ref_string':ref_string, 'beta_bit':beta_bit})
                     jwt_token = {'token': jwt.encode({'id':username}, "SECRET_KEY")}
-                    response.set_cookie(key='jwt-token', value= jwt_token.get('token'))
+                    response.set_cookie(key='jwt-token', value= jwt_token.get('token'), max_age = 300)
+                    Module_jwt.add_token_to_db(username, jwt_token.get('token'))
                     return response
 
                 jwt_token = {'token': jwt.encode({'id':username}, "SECRET_KEY")}
                 response = render(request,'voting/instructions.html', {'username':username})
-                response.set_cookie(key='jwt-token', value= jwt_token.get('token'))
+                response.set_cookie(key='jwt-token', value= jwt_token.get('token'), max_age = 300)
+                Module_jwt.add_token_to_db(username, jwt_token.get('token'))
                 return response
             else:
                 return render(request, 'voting/index.html', {'message':'Voter is not registered on blockchain'})
@@ -124,6 +127,8 @@ def cast_vote(request):
     try:
         username = request.GET.get('username')
         jwt_token = request.COOKIES['jwt-token']
+        if Module_jwt.validate_token(username, jwt_token) == False:
+            raise
     except:
         key = int(random.uniform(0,100000))
         fh = open('serverkey.txt', 'w')
@@ -174,6 +179,9 @@ def cast_vote(request):
 def done(request):
     try:
         jwt_token = request.COOKIES['jwt-token']
+        username = request.GET.get('username')
+        if Module_jwt.validate_token(username, jwt_token) == False:
+            raise
     except:
         key = int(random.uniform(0,100000))
         fh = open('serverkey.txt', 'w')
@@ -182,10 +190,13 @@ def done(request):
   
 def logout(request):
     try:
+        username = request.GET.get('username')
         jwt_token = request.COOKIES['jwt-token']
-        print(jwt_token)
+        #print(jwt_token, "delete_cookie")
         response = render(request, 'voting/logout.html', {'message':"You have been logged out"})
         response.delete_cookie('jwt-token')
+        Module_jwt.remove_token_from_db(username)
+        #print("Cookie deleted")
         return response
     except:
         key = int(random.uniform(0,100000))

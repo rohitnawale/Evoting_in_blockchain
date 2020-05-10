@@ -80,7 +80,7 @@ def changePassword(email,new_Pass):
 
     try:
         update_query = "update tbl_voters set password = '{}', homomorphic_sets = '{}' where email = '{}'".format(new_password,encrypted_sets,email)
-        cursor.execute(select_query)
+        cursor.execute(update_query)
         result = cursor.fetchall()
         db.commit()
         return True
